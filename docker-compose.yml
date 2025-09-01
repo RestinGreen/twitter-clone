@@ -1,0 +1,26 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb-container
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - ./mongodb_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: backend-container
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGODB_URL=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/twitter_clone?authSource=admin
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb
+
